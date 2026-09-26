@@ -83,6 +83,7 @@ export function AchievementCarousel() {
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
+  const capturedRef = useRef(false);
   const startXRef = useRef(0);
   const movedRef = useRef(false);
   const dxRef = useRef(0);
