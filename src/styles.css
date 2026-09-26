@@ -129,3 +129,25 @@
 @utility gold-rule {
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
+
+/*
+ * Scoped palette for the standalone Book Views analytics page (/book-views).
+ * Light paper surfaces, ink navy type, coral + cerulean series accents.
+ * Scoped so it never affects the noir gallery on "/".
+ */
+.bv-theme {
+  --bv-paper: oklch(0.985 0.006 95);
+  --bv-surface: oklch(1 0 0);
+  --bv-ink: oklch(0.21 0.035 265);
+  --bv-ink-soft: oklch(0.47 0.025 265);
+  --bv-ink-faint: oklch(0.63 0.018 265);
+  --bv-line: oklch(0.9 0.012 265);
+  --bv-coral: oklch(0.63 0.2 38);
+  --bv-cerulean: oklch(0.62 0.13 240);
+  --bv-teal: oklch(0.52 0.09 190);
+  --bv-night: oklch(0.21 0.035 265);
+
+  background-color: var(--bv-paper);
+  color: var(--bv-ink);
+}
+
