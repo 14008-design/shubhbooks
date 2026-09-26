@@ -91,6 +91,7 @@ export function AchievementCarousel() {
   lightboxRef.current = lightbox;
 
   const count = slides.length;
+  const activeSlide = lightbox === null ? undefined : slides[lightbox];
   const clamp = (i: number) => Math.min(count - 1, Math.max(0, i));
   const goTo = useCallback((i: number) => setIndex(clamp(i)), [count]);
   const step = useCallback((dir: number) => setIndex((i) => clamp(i + dir)), [count]);
@@ -350,15 +351,15 @@ export function AchievementCarousel() {
 
           <div className="max-h-[72vh] max-w-3xl" onClick={(e) => e.stopPropagation()}>
             <img
-              src={slides[lightbox].src}
-              alt={slides[lightbox].alt}
+              src={activeSlide.src}
+              alt={activeSlide.alt}
               className="max-h-[62vh] w-auto rounded-lg object-contain shadow-[0_40px_120px_-30px_oklch(0_0_0/90%)] ring-1 ring-gold/30"
             />
             <div className="mt-4 text-center">
               <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
-                {slides[lightbox].tag}
+                {activeSlide.tag}
               </p>
-              <h3 className="mt-1 font-display text-xl italic">{slides[lightbox].title}</h3>
+              <h3 className="mt-1 font-display text-xl italic">{activeSlide.title}</h3>
             </div>
           </div>
         </div>
