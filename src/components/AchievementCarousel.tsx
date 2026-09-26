@@ -126,16 +126,21 @@ export function AchievementCarousel() {
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     draggingRef.current = true;
+    capturedRef.current = false;
     startXRef.current = e.clientX;
     movedRef.current = false;
     dxRef.current = 0;
-    e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!draggingRef.current) return;
     const dx = e.clientX - startXRef.current;
-    if (Math.abs(dx) > 8) movedRef.current = true;
+    if (!capturedRef.current && Math.abs(dx) > 8) {
+      // Capture only once a real drag starts so simple taps still reach buttons
+      capturedRef.current = true;
+      movedRef.current = true;
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
     dxRef.current = dx;
     setDragDx(dx);
   };
