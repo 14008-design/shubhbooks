@@ -308,12 +308,12 @@ export function AchievementCarousel() {
       </footer>
 
       {/* Lightbox */}
-      {lightbox !== null && (
+      {lightbox !== null && activeSlide && (
         <div
           className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 p-4 backdrop-blur-md"
           role="dialog"
           aria-modal="true"
-          aria-label={slides[lightbox].title}
+          aria-label={activeSlide.title}
           onClick={() => setLightbox(null)}
         >
           <button
