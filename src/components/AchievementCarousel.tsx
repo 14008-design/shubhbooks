@@ -307,7 +307,7 @@ export function AchievementCarousel() {
       <footer className="mx-auto w-full max-w-2xl px-6 pb-8 text-center">
         <div className="gold-rule mx-auto mb-5 h-px w-16" />
         <p className="font-display text-base italic text-foreground/80">
-          &ldquo;Words are the wings that allow the mind to fly.&rdquo;
+          &ldquo;A mind without stimulation doesn&rsquo;t beg for views.&rdquo;
         </p>
         <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
           Shubhang Mishra · Academic Year 2024–2026
