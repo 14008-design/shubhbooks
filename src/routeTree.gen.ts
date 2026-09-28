@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BookViewsRouteImport } from './routes/book-views'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiPublicRefreshViewsRouteImport } from './routes/api/public/refresh-views'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +24,50 @@ const BookViewsRoute = BookViewsRouteImport.update({
   path: '/book-views',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicRefreshViewsRoute = ApiPublicRefreshViewsRouteImport.update({
+  id: '/api/public/refresh-views',
+  path: '/api/public/refresh-views',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/book-views': typeof BookViewsRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/public/refresh-views': typeof ApiPublicRefreshViewsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/book-views': typeof BookViewsRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/public/refresh-views': typeof ApiPublicRefreshViewsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/book-views': typeof BookViewsRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/public/refresh-views': typeof ApiPublicRefreshViewsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/book-views'
+  fullPaths: '/' | '/book-views' | '/api/chat' | '/api/public/refresh-views'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/book-views'
-  id: '__root__' | '/' | '/book-views'
+  to: '/' | '/book-views' | '/api/chat' | '/api/public/refresh-views'
+  id:
+    '__root__' | '/' | '/book-views' | '/api/chat' | '/api/public/refresh-views'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BookViewsRoute: typeof BookViewsRoute
+  ApiChatRoute: typeof ApiChatRoute
+  ApiPublicRefreshViewsRoute: typeof ApiPublicRefreshViewsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +86,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookViewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/refresh-views': {
+      id: '/api/public/refresh-views'
+      path: '/api/public/refresh-views'
+      fullPath: '/api/public/refresh-views'
+      preLoaderRoute: typeof ApiPublicRefreshViewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BookViewsRoute: BookViewsRoute,
+  ApiChatRoute: ApiChatRoute,
+  ApiPublicRefreshViewsRoute: ApiPublicRefreshViewsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
