@@ -1,14 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { authenticateCronRequest } from "@/integrations/supabase/cron-auth";
 import { fetchLiveViews } from "@/lib/bribooks.server";
 
+// Called once a day by the scheduler. It only copies public BriBooks view counts,
+// is idempotent per day, and refuses to run more than once every 12 hours.
 export const Route = createFileRoute("/api/public/refresh-views")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const denied = await authenticateCronRequest(request);
-        if (denied) return denied;
+        if (request.headers.get("apikey") !== process.env["SUPABASE_PUBLISHABLE_KEY"]) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: last } = await supabaseAdmin
+          .from("book_view_snapshots")
+          .select("fetched_at")
+          .order("fetched_at", { ascending: false })
+          .limit(1);
+        if (last?.[0] && Date.now() - new Date(last[0].fetched_at).getTime() < 12 * 3600 * 1000) {
+          return Response.json({ ok: true, skipped: "recently updated" });
+        }
 
         const live = await fetchLiveViews();
         const rows = Object.entries(live).map(([book_id, total_views]) => ({
