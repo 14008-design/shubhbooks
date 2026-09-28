@@ -1,4 +1,8 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
+
+import BookInsightsChat from "@/components/BookInsightsChat";
+import { supabase } from "@/integrations/supabase/client";
+import { AUTHOR, BOOK_BASES, BRIBOOKS_URL, yearlyFromTotal } from "@/lib/book-data";
 
 type Book = {
   id: string;
@@ -8,20 +12,24 @@ type Book = {
   yearly: number[];
 };
 
-const BOOKS: Book[] = [
-  {
-    id: "fox",
-    label: "The Fox and the Cub",
-    color: "var(--bv-coral)",
-    yearly: [40, 60, 115, 107],
-  },
-  {
-    id: "rao",
-    label: "Rao's Expedition Book",
-    color: "var(--bv-cerulean)",
-    yearly: [25, 43, 63],
-  },
-];
+function useLiveTotals() {
+  const [totals, setTotals] = useState<Record<string, number>>({});
+  const [updated, setUpdated] = useState<string | null>(null);
+  useEffect(() => {
+    void supabase
+      .from("book_view_snapshots")
+      .select("book_id,total_views,fetched_at")
+      .order("fetched_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => {
+        const t: Record<string, number> = {};
+        for (const r of data ?? []) if (t[r.book_id] === undefined) t[r.book_id] = r.total_views;
+        setTotals(t);
+        if (data?.[0]) setUpdated(new Date(data[0].fetched_at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }));
+      });
+  }, []);
+  return { totals, updated };
+}
 
 const Y_MAX = 500;
 const CHART_W = 720;
@@ -37,17 +45,24 @@ function cumulative(yearly: number[]) {
 }
 
 export default function BookViewsDashboard() {
-  const [active, setActive] = useState<string[]>(BOOKS.map((b) => b.id));
+  const [active, setActive] = useState<string[]>(BOOK_BASES.map((b) => b.id));
   const [hoverYear, setHoverYear] = useState<number | null>(null);
+  const { totals, updated } = useLiveTotals();
 
   const series = useMemo(
     () =>
-      BOOKS.map((b) => ({
-        ...b,
-        cum: cumulative(b.yearly),
-        total: b.yearly.reduce((a, c) => a + c, 0),
-      })),
-    [],
+      BOOK_BASES.map((base): Book & { cum: number[]; total: number } => {
+        const yearly = yearlyFromTotal(base, totals[base.id] ?? base.fallbackTotal);
+        return {
+          id: base.id,
+          label: base.label,
+          color: base.color,
+          yearly,
+          cum: cumulative(yearly),
+          total: yearly.reduce((a, c) => a + c, 0),
+        };
+      }),
+    [totals],
   );
 
   const maxYears = Math.max(...series.map((s) => s.yearly.length));
@@ -107,10 +122,11 @@ export default function BookViewsDashboard() {
           </div>
         </div>
         <span
-          className="rounded-full border px-3 py-1.5 text-xs font-medium"
+          className="flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium"
           style={{ borderColor: "var(--bv-line)", color: "var(--bv-ink-soft)" }}
         >
-          Public read-only view
+          <span className="h-2 w-2 rounded-full" style={{ background: "var(--bv-teal)" }} />
+          {updated ? `Live from BriBooks · ${updated}` : "Live from BriBooks"}
         </span>
       </header>
 
@@ -378,6 +394,19 @@ export default function BookViewsDashboard() {
                   </span>
                 </div>
                 <h3 className="font-display mt-2 text-2xl">{s.label}</h3>
+                <p className="mt-1 text-xs" style={{ color: "var(--bv-ink-soft)" }}>
+                  by <span className="font-semibold">{AUTHOR}</span> ·{" "}
+                  <a
+                    href={BRIBOOKS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="underline underline-offset-2"
+                    style={{ color: s.color }}
+                  >
+                    BriBooks store
+                  </a>
+                </p>
                 <div className="mt-6 grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-[10px] font-semibold tracking-[0.2em]" style={{ color: "var(--bv-ink-faint)" }}>
@@ -416,6 +445,8 @@ export default function BookViewsDashboard() {
             );
           })}
         </div>
+
+        <BookInsightsChat />
       </main>
     </div>
   );
