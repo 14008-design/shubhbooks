@@ -31,7 +31,6 @@ export const Route = createFileRoute("/api/public/refresh-views")({
         if (rows.length === 0) {
           return Response.json({ ok: false, error: "No matching books found" }, { status: 502 });
         }
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { error } = await supabaseAdmin
           .from("book_view_snapshots")
           .upsert(rows, { onConflict: "book_id,snapshot_date" });
