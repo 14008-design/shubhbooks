@@ -4,6 +4,7 @@ import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
 
 import { AUTHOR, BOOK_BASES, BRIBOOKS_URL, yearlyFromTotal } from "@/lib/book-data";
+import { getBookProfiles, profilesToPrompt } from "@/lib/book-profiles.server";
 import {
   createLovableAiGatewayRunIdFetch,
   getLovableAiGatewayRunId,
@@ -44,12 +45,18 @@ export const Route = createFileRoute("/api/chat")({
         const apiKey = process.env["LOVABLE_API_KEY"];
         if (!apiKey) return new Response("AI is not configured", { status: 500 });
 
-        const stats = await loadStats();
+        const [stats, profiles] = await Promise.all([loadStats(), getBookProfiles()]);
         const system = `You are the Book Views analyst for author ${AUTHOR}'s books on BriBooks (${BRIBOOKS_URL}).
-Answer questions about the readership analytics below: views per book, per year, growth, comparisons, trends and simple projections.
+Answer questions about the readership analytics below (views per book, per year, growth, comparisons, trends, simple projections),
+and also about what each book is about and who the author is, using the book previews and author introductions below.
 Be warm, concise and encouraging (the author is a young writer). Use short paragraphs or bullets, and show numbers.
-Only use the data given; if asked something outside it, say so briefly. Label any projection as an estimate.
-Current data (JSON): ${JSON.stringify(stats)}`;
+Only use the information given; if asked something outside it, say so briefly. Label any projection as an estimate.
+Don't invent plot details beyond the preview — say the full story is on BriBooks.
+
+Current view data (JSON): ${JSON.stringify(stats)}
+
+Books and author (from BriBooks):
+${profilesToPrompt(profiles)}`;
 
         const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(request));
         const provider = createOpenAI({
