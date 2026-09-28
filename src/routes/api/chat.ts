@@ -11,7 +11,7 @@ import {
 } from "@/lib/ai/run-id.server";
 
 async function loadStats() {
-  const sb = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, {
+  const sb = createClient(import.meta.env["VITE_SUPABASE_URL"], import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"], {
     auth: { persistSession: false },
   });
   const { data } = await sb
@@ -41,7 +41,7 @@ export const Route = createFileRoute("/api/chat")({
         if (!body || !Array.isArray(body.messages) || body.messages.length > 60) {
           return new Response("Invalid request", { status: 400 });
         }
-        const apiKey = process.env.LOVABLE_API_KEY;
+        const apiKey = process.env["LOVABLE_API_KEY"];
         if (!apiKey) return new Response("AI is not configured", { status: 500 });
 
         const stats = await loadStats();
