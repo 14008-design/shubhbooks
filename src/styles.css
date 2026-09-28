@@ -139,6 +139,17 @@
   --bv-paper: oklch(0.985 0.006 95);
   --bv-surface: oklch(1 0 0);
   --bv-ink: oklch(0.21 0.035 265);
+  /* remap shared UI tokens so chat components read well on the light page */
+  --foreground: oklch(0.21 0.035 265);
+  --muted-foreground: oklch(0.45 0.03 265);
+  --secondary: oklch(0.95 0.01 95);
+  --secondary-foreground: oklch(0.21 0.035 265);
+  --accent: oklch(0.95 0.01 95);
+  --accent-foreground: oklch(0.21 0.035 265);
+  --background: oklch(1 0 0);
+  --muted: oklch(0.96 0.008 95);
+  --border: oklch(0.9 0.01 95);
+  --input: oklch(0.9 0.01 95);
   --bv-ink-soft: oklch(0.47 0.025 265);
   --bv-ink-faint: oklch(0.63 0.018 265);
   --bv-line: oklch(0.9 0.012 265);

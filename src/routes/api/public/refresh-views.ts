@@ -8,7 +8,8 @@ export const Route = createFileRoute("/api/public/refresh-views")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (request.headers.get("apikey") !== process.env["SUPABASE_PUBLISHABLE_KEY"]) {
+        const key = request.headers.get("apikey");
+        if (!key || (key !== process.env["SUPABASE_PUBLISHABLE_KEY"] && key !== process.env["VITE_SUPABASE_PUBLISHABLE_KEY"])) {
           return new Response("Unauthorized", { status: 401 });
         }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
