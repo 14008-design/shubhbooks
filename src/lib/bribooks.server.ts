@@ -16,8 +16,8 @@ export async function fetchLiveViews() {
       body: JSON.stringify({ page: 1, genre_id: 0, search: book.search, timezone: 0, version: "7.0.4", locale: "in" }),
     });
     if (!res.ok) throw new Error(`BriBooks search failed (${res.status})`);
-    const json = (await res.json()) as { data?: { books?: ApiBook[] } };
-    const books = json.data?.books ?? [];
+    const json = (await res.json()) as { books?: ApiBook[]; data?: { books?: ApiBook[] } };
+    const books = json.books ?? json.data?.books ?? [];
     const key = normalizeTitle(book.search).slice(0, 6); // "thefox" / "raosex"
     const match = books.find(
       (b) =>
