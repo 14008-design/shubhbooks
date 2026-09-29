@@ -35,7 +35,7 @@ function useLiveTotals() {
       if (latest && latest.slice(0, 10) === today) return;
       void fetch("/api/public/refresh-views", {
         method: "POST",
-        headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+        headers: { apikey: import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] },
       })
         .then((r) => (r.ok ? load() : undefined))
         .catch(() => undefined);
