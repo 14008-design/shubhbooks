@@ -38,6 +38,27 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_questions: {
+        Row: {
+          asked_at: string
+          book: string
+          id: string
+          question: string
+        }
+        Insert: {
+          asked_at?: string
+          book?: string
+          id?: string
+          question: string
+        }
+        Update: {
+          asked_at?: string
+          book?: string
+          id?: string
+          question?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
