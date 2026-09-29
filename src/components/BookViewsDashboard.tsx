@@ -16,17 +16,30 @@ function useLiveTotals() {
   const [totals, setTotals] = useState<Record<string, number>>({});
   const [updated, setUpdated] = useState<string | null>(null);
   useEffect(() => {
-    void supabase
-      .from("book_view_snapshots")
-      .select("book_id,total_views,fetched_at")
-      .order("fetched_at", { ascending: false })
-      .limit(20)
-      .then(({ data }) => {
-        const t: Record<string, number> = {};
-        for (const r of data ?? []) if (t[r.book_id] === undefined) t[r.book_id] = r.total_views;
-        setTotals(t);
-        if (data?.[0]) setUpdated(new Date(data[0].fetched_at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }));
-      });
+    const load = () =>
+      supabase
+        .from("book_view_snapshots")
+        .select("book_id,total_views,fetched_at")
+        .order("fetched_at", { ascending: false })
+        .limit(20)
+        .then(({ data }) => {
+          const t: Record<string, number> = {};
+          for (const r of data ?? []) if (t[r.book_id] === undefined) t[r.book_id] = r.total_views;
+          setTotals(t);
+          if (data?.[0]) setUpdated(new Date(data[0].fetched_at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }));
+          return data?.[0]?.fetched_at as string | undefined;
+        });
+    void load().then((latest) => {
+      // If the newest count isn't from today, fetch a fresh one from BriBooks.
+      const today = new Date().toISOString().slice(0, 10);
+      if (latest && latest.slice(0, 10) === today) return;
+      void fetch("/api/public/refresh-views", {
+        method: "POST",
+        headers: { apikey: import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] },
+      })
+        .then((r) => (r.ok ? load() : undefined))
+        .catch(() => undefined);
+    });
   }, []);
   return { totals, updated };
 }

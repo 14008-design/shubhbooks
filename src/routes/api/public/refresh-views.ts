@@ -13,12 +13,18 @@ export const Route = createFileRoute("/api/public/refresh-views")({
           return new Response("Unauthorized", { status: 401 });
         }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const today = new Date().toISOString().slice(0, 10);
         const { data: last } = await supabaseAdmin
           .from("book_view_snapshots")
-          .select("fetched_at")
+          .select("fetched_at,snapshot_date")
           .order("fetched_at", { ascending: false })
           .limit(1);
-        if (last?.[0] && Date.now() - new Date(last[0].fetched_at).getTime() < 12 * 3600 * 1000) {
+        // Skip only if already refreshed today and within the last 30 minutes.
+        if (
+          last?.[0] &&
+          last[0].snapshot_date === today &&
+          Date.now() - new Date(last[0].fetched_at).getTime() < 30 * 60 * 1000
+        ) {
           return Response.json({ ok: true, skipped: "recently updated" });
         }
 

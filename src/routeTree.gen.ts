@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BookViewsRouteImport } from './routes/book-views'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiPublicQuestionsReportRouteImport } from './routes/api/public/questions-report'
 import { Route as ApiPublicRefreshViewsRouteImport } from './routes/api/public/refresh-views'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,12 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicQuestionsReportRoute =
+  ApiPublicQuestionsReportRouteImport.update({
+    id: '/api/public/questions-report',
+    path: '/api/public/questions-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicRefreshViewsRoute = ApiPublicRefreshViewsRouteImport.update({
   id: '/api/public/refresh-views',
   path: '/api/public/refresh-views',
@@ -39,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/book-views': typeof BookViewsRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/public/questions-report': typeof ApiPublicQuestionsReportRoute
   '/api/public/refresh-views': typeof ApiPublicRefreshViewsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/book-views': typeof BookViewsRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/public/questions-report': typeof ApiPublicQuestionsReportRoute
   '/api/public/refresh-views': typeof ApiPublicRefreshViewsRoute
 }
 export interface FileRoutesById {
@@ -52,21 +61,38 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/book-views': typeof BookViewsRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/public/questions-report': typeof ApiPublicQuestionsReportRoute
   '/api/public/refresh-views': typeof ApiPublicRefreshViewsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/book-views' | '/api/chat' | '/api/public/refresh-views'
+  fullPaths:
+    | '/'
+    | '/book-views'
+    | '/api/chat'
+    | '/api/public/questions-report'
+    | '/api/public/refresh-views'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/book-views' | '/api/chat' | '/api/public/refresh-views'
+  to:
+    | '/'
+    | '/book-views'
+    | '/api/chat'
+    | '/api/public/questions-report'
+    | '/api/public/refresh-views'
   id:
-    '__root__' | '/' | '/book-views' | '/api/chat' | '/api/public/refresh-views'
+    | '__root__'
+    | '/'
+    | '/book-views'
+    | '/api/chat'
+    | '/api/public/questions-report'
+    | '/api/public/refresh-views'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BookViewsRoute: typeof BookViewsRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiPublicQuestionsReportRoute: typeof ApiPublicQuestionsReportRoute
   ApiPublicRefreshViewsRoute: typeof ApiPublicRefreshViewsRoute
 }
 
@@ -93,6 +119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/questions-report': {
+      id: '/api/public/questions-report'
+      path: '/api/public/questions-report'
+      fullPath: '/api/public/questions-report'
+      preLoaderRoute: typeof ApiPublicQuestionsReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/refresh-views': {
       id: '/api/public/refresh-views'
       path: '/api/public/refresh-views'
@@ -107,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BookViewsRoute: BookViewsRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiPublicQuestionsReportRoute: ApiPublicQuestionsReportRoute,
   ApiPublicRefreshViewsRoute: ApiPublicRefreshViewsRoute,
 }
 export const routeTree = rootRouteImport
