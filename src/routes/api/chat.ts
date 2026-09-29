@@ -11,6 +11,29 @@ import {
   withLovableAiGatewayRunIdHeader,
 } from "@/lib/ai/run-id.server";
 
+const AUTHOR_INTRO =
+  "Hello, my name is Shubhang Mishra. I am a middle schooler in Seth M.R. Jaipuria School. I have a deep interest in literature and music. I read a lot of books ranging from Percy Jackson to The Hunger Games to Diary of a Wimpy Kid, etc. I play badminton and do calisthenics.";
+
+async function logQuestion(messages: UIMessage[]) {
+  try {
+    const last = [...messages].reverse().find((m) => m.role === "user");
+    const text = (last?.parts ?? [])
+      .map((p) => (p.type === "text" ? p.text : ""))
+      .join(" ")
+      .trim()
+      .slice(0, 2000);
+    if (!text) return;
+    const t = text.toLowerCase();
+    const fox = t.includes("fox") || t.includes("cub");
+    const rao = t.includes("rao") || t.includes("expedition");
+    const book = fox && rao ? "Both" : fox ? "The Fox and the Cub" : rao ? "Rao's Expedition Book" : "General";
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("chat_questions").insert({ question: text, book });
+  } catch (e) {
+    console.error("question log failed", e);
+  }
+}
+
 async function loadStats() {
   const sb = createClient(import.meta.env["VITE_SUPABASE_URL"], import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"], {
     auth: { persistSession: false },
@@ -45,18 +68,22 @@ export const Route = createFileRoute("/api/chat")({
         const apiKey = process.env["LOVABLE_API_KEY"];
         if (!apiKey) return new Response("AI is not configured", { status: 500 });
 
+        void logQuestion(body.messages);
         const [stats, profiles] = await Promise.all([loadStats(), getBookProfiles()]);
         const system = `You are the Book Views analyst for author ${AUTHOR}'s books on BriBooks (${BRIBOOKS_URL}).
 Answer questions about the readership analytics below (views per book, per year, growth, comparisons, trends, simple projections),
-and also about what each book is about and who the author is, using the book previews and author introductions below.
+and also about what each book is about and who the author is.
 Be warm, concise and encouraging (the author is a young writer). Use short paragraphs or bullets, and show numbers.
 Only use the information given; if asked something outside it, say so briefly. Label any projection as an estimate.
 Don't invent plot details beyond the preview — say the full story is on BriBooks.
 
+AUTHOR INTRODUCTION — this is the author's own official introduction. Whenever anyone asks about the author (who he is, about Shubhang, his hobbies, school, interests), answer using exactly this text and nothing else about him; ignore any older author bios:
+"${AUTHOR_INTRO}"
+
 Current view data (JSON): ${JSON.stringify(stats)}
 
-Books and author (from BriBooks):
-${profilesToPrompt(profiles)}`;
+Book previews (from BriBooks):
+${profilesToPrompt(profiles.map((p) => ({ ...p, authorBio: AUTHOR_INTRO })))}`;
 
         const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(request));
         const provider = createOpenAI({
