@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback, useEffect } from "react";
 
 import BookInsightsChat from "@/components/BookInsightsChat";
-import { supabase } from "@/integrations/supabase/client";
+import { getLatestSnapshots } from "@/lib/snapshots.functions";
 import { AUTHOR, BOOK_BASES, BRIBOOKS_URL, yearlyFromTotal } from "@/lib/book-data";
 
 type Book = {
@@ -17,12 +17,9 @@ function useLiveTotals() {
   const [updated, setUpdated] = useState<string | null>(null);
   useEffect(() => {
     const load = () =>
-      supabase
-        .from("book_view_snapshots")
-        .select("book_id,total_views,fetched_at")
-        .order("fetched_at", { ascending: false })
-        .limit(20)
-        .then(({ data }) => {
+      getLatestSnapshots()
+        .catch(() => [])
+        .then((data) => {
           const t: Record<string, number> = {};
           for (const r of data ?? []) if (t[r.book_id] === undefined) t[r.book_id] = r.total_views;
           setTotals(t);
