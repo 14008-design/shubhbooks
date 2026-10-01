@@ -15,7 +15,11 @@ export const Route = createFileRoute("/api/public/questions-report")({
           .order("asked_at", { ascending: false })
           .limit(5000);
         if (error) return new Response(error.message, { status: 500 });
-        const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+        // Neutralize spreadsheet formulas (=, +, -, @, tab, CR) by prefixing a quote.
+        const esc = (v: string) => {
+          const safe = /^[=+\-@\t\r]/.test(v) ? `'${v}` : v;
+          return `"${safe.replace(/"/g, '""')}"`;
+        };
         const rows = (data ?? []).map((r) =>
           [esc(new Date(r.asked_at).toISOString().replace("T", " ").slice(0, 19) + " UTC"), esc(r.book), esc(r.question)].join(","),
         );
