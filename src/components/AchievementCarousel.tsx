@@ -5,6 +5,8 @@ import a2 from "@/assets/achievement-2.jpg.asset.json";
 import a3 from "@/assets/achievement-3.jpg.asset.json";
 import a4 from "@/assets/achievement-4.jpg.asset.json";
 import a5 from "@/assets/achievement-5.jpg.asset.json";
+import foxCover from "@/assets/fox-cover.avif.asset.json";
+import raoCover from "@/assets/rao-cover.avif.asset.json";
 
 type Slide = {
   src: string;
@@ -302,6 +304,29 @@ export function AchievementCarousel() {
           Swipe or tap to explore
         </p>
       </main>
+
+      {/* Books by the author */}
+      <section className="mx-auto w-full max-w-3xl px-6 pb-10 text-center" aria-labelledby="books-heading">
+        <p className="text-[11px] font-semibold uppercase text-gold">From the author</p>
+        <h2 id="books-heading" className="mt-2 font-display text-2xl">The stories behind the awards</h2>
+        <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">Explore Shubhang Mishra&rsquo;s children&rsquo;s forest story and expedition tale, published on BriBooks.</p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          {[
+            { title: "The Fox and the Cub", type: "A forest story", cover: foxCover.url, url: "https://www.bribooks.com/bookstore/the-fox-and-cub/" },
+            { title: "Rao's Expedition Book", type: "An expedition story", cover: raoCover.url, url: "https://www.bribooks.com/bookstore/rao-s-expedition-book/" },
+          ].map((book) => (
+            <a key={book.title} href={book.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 rounded-md border border-border bg-card p-3 text-left transition-colors hover:border-gold/60">
+              <img src={book.cover} alt={`${book.title} cover`} loading="lazy" className="h-24 w-16 shrink-0 object-contain" />
+              <span className="min-w-0">
+                <span className="block text-[10px] uppercase text-gold">{book.type}</span>
+                <span className="mt-1 block font-display text-lg leading-tight">{book.title}</span>
+                <span className="mt-2 block text-xs text-gold-soft">Preview &amp; buy on BriBooks ↗</span>
+              </span>
+            </a>
+          ))}
+        </div>
+        <a href="/book-views" target="_blank" rel="noopener noreferrer" className="mt-5 inline-block text-sm text-gold underline underline-offset-4">See live book views &amp; ask about the stories ↗</a>
+      </section>
 
       {/* Footer */}
       <footer className="mx-auto w-full max-w-2xl px-6 pb-8 text-center">

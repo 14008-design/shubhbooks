@@ -1,8 +1,25 @@
 import { useMemo, useState, useCallback, useEffect } from "react";
 
 import BookInsightsChat from "@/components/BookInsightsChat";
+import foxCover from "@/assets/fox-cover.avif.asset.json";
+import raoCover from "@/assets/rao-cover.avif.asset.json";
 import { getLatestSnapshots } from "@/lib/snapshots.functions";
-import { AUTHOR, BOOK_BASES, BRIBOOKS_URL, yearlyFromTotal } from "@/lib/book-data";
+import { AUTHOR, BOOK_BASES, yearlyFromTotal } from "@/lib/book-data";
+
+const BOOK_DETAILS = {
+  fox: {
+    cover: foxCover.url,
+    url: "https://www.bribooks.com/bookstore/the-fox-and-cub/",
+    description: "A young reader's forest story that opens with a lion, a lioness and their cub. Discover where their adventure leads.",
+    category: "Children's forest story",
+  },
+  rao: {
+    cover: raoCover.url,
+    url: "https://www.bribooks.com/bookstore/rao-s-expedition-book/",
+    description: "Rao's curiosity about expeditions sets a story of discovery in motion, from mysteries of space to new cultures.",
+    category: "Expedition & discovery",
+  },
+} as const;
 
 type Book = {
   id: string;
@@ -161,8 +178,8 @@ export default function BookViewsDashboard() {
               <span style={{ color: "var(--bv-coral)" }}>books in motion.</span>
             </h1>
             <p className="mt-5 text-sm leading-relaxed sm:text-base" style={{ color: "var(--bv-ink-soft)" }}>
-              Track cumulative views across every year of a book&rsquo;s journey. Tap a title to
-              isolate it, or hover the chart to read any year.
+              Explore live BriBooks views for two stories by young author Shubhang Mishra —
+              then open the book that catches your eye.
             </p>
           </div>
           <div className="border-l pl-5" style={{ borderColor: "var(--bv-coral)" }}>
@@ -377,46 +394,46 @@ export default function BookViewsDashboard() {
           </aside>
         </div>
 
-        {/* Book cards */}
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
+         {/* Book discovery */}
+         <div className="mt-10 flex flex-wrap items-end justify-between gap-3">
+           <div>
+             <p className="text-[10px] font-semibold tracking-[0.2em]" style={{ color: "var(--bv-teal)" }}>THE STORIES BEHIND THE NUMBERS</p>
+             <h2 className="font-display mt-1 text-3xl">Meet the books</h2>
+           </div>
+           <p className="max-w-sm text-sm" style={{ color: "var(--bv-ink-soft)" }}>Each cover opens its official BriBooks listing, where you can preview the story and see purchase options.</p>
+         </div>
+         <div className="mt-5 grid gap-6 md:grid-cols-2">
           {series.map((s, idx) => {
             const on = active.includes(s.id);
+             const book = BOOK_DETAILS[s.id as keyof typeof BOOK_DETAILS];
             return (
-              <button
+               <article
                 key={s.id}
-                type="button"
-                onClick={() => toggle(s.id)}
-                className="rounded-2xl border p-6 text-left transition-all hover:-translate-y-0.5"
+                 className="rounded-lg border p-5 sm:p-6"
                 style={{
-                  borderColor: on ? s.color : "var(--bv-line)",
+                   borderColor: "var(--bv-line)",
                   background: "var(--bv-surface)",
-                  opacity: on ? 1 : 0.65,
                 }}
               >
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em]"
-                    style={{ color: "var(--bv-ink-faint)" }}>
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: s.color }} />
-                    BOOK 0{idx + 1}
-                  </span>
-                  <span className="text-[10px] font-semibold tracking-[0.16em]" style={{ color: s.color }}>
-                    {on ? "SHOWING" : "HIDDEN"}
-                  </span>
-                </div>
-                <h3 className="font-display mt-2 text-2xl">{s.label}</h3>
-                <p className="mt-1 text-xs" style={{ color: "var(--bv-ink-soft)" }}>
-                  by <span className="font-semibold">{AUTHOR}</span> ·{" "}
-                  <a
-                    href={BRIBOOKS_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="underline underline-offset-2"
-                    style={{ color: s.color }}
-                  >
-                    BriBooks store
-                  </a>
-                </p>
+                 <div className="flex gap-4 sm:gap-6">
+                   <a href={book.url} target="_blank" rel="noopener noreferrer" aria-label={`View ${s.label} on BriBooks`} className="block w-24 shrink-0 self-start transition-transform hover:-translate-y-1 sm:w-32">
+                     <img src={book.cover} alt={`${s.label} book cover`} loading="lazy" className="w-full rounded-sm border object-contain shadow-sm" style={{ borderColor: "var(--bv-line)" }} />
+                   </a>
+                   <div className="min-w-0 flex-1">
+                     <p className="text-[10px] font-semibold uppercase" style={{ color: s.color }}>{book.category} · Book 0{idx + 1}</p>
+                     <h3 className="font-display mt-2 text-xl leading-tight sm:text-2xl">{s.label}</h3>
+                     <p className="mt-1 text-xs" style={{ color: "var(--bv-ink-soft)" }}>by {AUTHOR}</p>
+                     <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--bv-ink-soft)" }}>{book.description}</p>
+                   </div>
+                 </div>
+                 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                   <a href={book.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-80" style={{ background: "var(--bv-night)", color: "var(--bv-surface)" }}>
+                     Preview &amp; buy on BriBooks <span aria-hidden="true">↗</span>
+                   </a>
+                   <button type="button" onClick={() => toggle(s.id)} aria-pressed={on} className="text-xs font-semibold underline underline-offset-4" style={{ color: s.color }}>
+                     {on ? "Hide from graph" : "Show on graph"}
+                   </button>
+                 </div>
                 <div className="mt-6 grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-[10px] font-semibold tracking-[0.2em]" style={{ color: "var(--bv-ink-faint)" }}>
@@ -451,7 +468,7 @@ export default function BookViewsDashboard() {
                     </div>
                   ))}
                 </div>
-              </button>
+               </article>
             );
           })}
         </div>
