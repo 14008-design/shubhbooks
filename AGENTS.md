@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Single-purpose site: / is the achievement carousel for Google Sites iframe embedding. Slides are CDN asset pointer imports (src/assets/*.asset.json) — never inline the binaries. Keep the page self-contained and fully interactive inside a cross-origin iframe.
+- Book promotion uses verified BriBooks product URLs and locally served cover asset pointers; embedded pages must not rely on access to their Google Sites parent frame.
