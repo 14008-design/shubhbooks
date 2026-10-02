@@ -1,3 +1,3 @@
 - [x] Make the book analytics embed show authentic covers, accurate short descriptions, and direct book links.
 - [x] Connect the achievement gallery to the books without disturbing the carousel.
-- [ ] Improve search descriptions for both standalone embed pages and verify their interactions.
+- [x] Improve search descriptions for both standalone embed pages and verify their interactions.
