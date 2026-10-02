@@ -5,17 +5,17 @@ import { AchievementCarousel } from "@/components/AchievementCarousel";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Achievement Gallery — Shubhang Mishra" },
+      { title: "Shubhang Mishra | Young Author & Achievement Portfolio" },
       {
         name: "description",
         content:
-          "An interactive gallery of academic achievements — spelling bees, creative writing, publication and music.",
+          "Explore young author Shubhang Mishra’s achievements in writing, spelling and music, and discover his children’s stories The Fox and the Cub and Rao’s Expedition Book.",
       },
-      { property: "og:title", content: "Achievement Gallery — Shubhang Mishra" },
+      { property: "og:title", content: "Shubhang Mishra | Young Author & Achievement Portfolio" },
       {
         property: "og:description",
         content:
-          "An interactive gallery of academic achievements — spelling bees, creative writing, publication and music.",
+          "Explore young author Shubhang Mishra’s achievements and his two books: The Fox and the Cub and Rao’s Expedition Book.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

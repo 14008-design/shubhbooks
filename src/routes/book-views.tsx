@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import BookViewsDashboard from "@/components/BookViewsDashboard";
 
-const title = "Book Views — Analytics Desk";
+const title = "The Fox and the Cub & Rao’s Expedition Book | Shubhang Mishra";
 const description =
-  "A clear view of book readership across every year of a title's journey. Cumulative views for The Fox and the Cub and Rao's Expedition Book.";
+  "Discover Shubhang Mishra’s children’s forest story and expedition book. Explore live BriBooks view counts, preview the stories and find each book’s official listing.";
 
 export const Route = createFileRoute("/book-views")({
   head: () => ({
