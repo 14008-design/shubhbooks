@@ -44,9 +44,10 @@ function useLiveTotals() {
           return data?.[0]?.fetched_at as string | undefined;
         });
     void load().then((latest) => {
-      // If the newest count isn't from today, fetch a fresh one from BriBooks.
-      const today = new Date().toISOString().slice(0, 10);
-      if (latest && latest.slice(0, 10) === today) return;
+      // Refresh when the newest count is older than 30 minutes, even if it is
+      // from today — BriBooks totals can rise several times a day.
+      const cutoff = Date.now() - 30 * 60 * 1000;
+      if (latest && new Date(latest).getTime() >= cutoff) return;
       void fetch("/api/public/refresh-views", {
         method: "POST",
         headers: { apikey: import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] },
