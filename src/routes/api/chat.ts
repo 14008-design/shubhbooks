@@ -62,8 +62,21 @@ export const Route = createFileRoute("/api/chat")({
     handlers: {
       POST: async ({ request }) => {
         const body = (await request.json().catch(() => null)) as { messages?: UIMessage[] } | null;
-        if (!body || !Array.isArray(body.messages) || body.messages.length > 60) {
+        if (!body || !Array.isArray(body.messages)) {
           return new Response("Invalid request", { status: 400 });
+        }
+        body.messages = body.messages
+          .filter(
+            (m) =>
+              m &&
+              (m.role === "user" || m.role === "assistant") &&
+              Array.isArray(m.parts) &&
+              m.parts.some((p) => p && p.type === "text" && typeof p.text === "string" && p.text.trim()),
+          )
+          .map((m) => ({ ...m, parts: m.parts.filter((p) => p && p.type === "text") }))
+          .slice(-40);
+        if (body.messages.length === 0 || body.messages[body.messages.length - 1]!.role !== "user") {
+          return new Response("Please type a question.", { status: 400 });
         }
         const apiKey = process.env["LOVABLE_API_KEY"];
         if (!apiKey) return new Response("AI is not configured", { status: 500 });
