@@ -3,3 +3,5 @@
 - [x] Improve search descriptions for both standalone embed pages and verify their interactions.
 - [ ] Fix analytics page stuck on morning snapshot: refresh whenever newest snapshot is >30 min old, even same-day (done in code, verify live).
 - [ ] Ads advice for the site (pending user answers: goal + audience; Google Ads needs an 18+ account owner).
+- [x] Build /promo QR ad screen: Fox cover, live reader count, QR to /book-views, BriBooks buy links, Rao cross-promo. Verified rendering, no errors.
+- [ ] Publish so /promo and the pending fixes go live.
