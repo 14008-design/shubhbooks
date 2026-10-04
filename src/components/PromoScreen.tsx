@@ -15,9 +15,25 @@ export default function PromoScreen() {
   const [views, setViews] = useState<number>(FALLBACK_VIEWS);
 
   useEffect(() => {
-    void getLatestSnapshots().then((rows) => {
-      const fox = rows?.find((r) => r.book_id === "fox");
-      if (fox && fox.total_views > 0) setViews(fox.total_views);
+    const load = () =>
+      getLatestSnapshots()
+        .catch(() => [])
+        .then((rows) => {
+          const fox = rows?.find((r) => r.book_id === "fox");
+          if (fox && fox.total_views > 0) setViews(fox.total_views);
+          return rows?.[0]?.fetched_at as string | undefined;
+        });
+    void load().then((latest) => {
+      // Same rule as the analytics page: refresh when the newest count is
+      // older than 30 minutes, so this page also pulls live BriBooks totals.
+      const cutoff = Date.now() - 30 * 60 * 1000;
+      if (latest && new Date(latest).getTime() >= cutoff) return;
+      void fetch("/api/public/refresh-views", {
+        method: "POST",
+        headers: { apikey: import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] },
+      })
+        .then((r) => (r.ok ? load() : undefined))
+        .catch(() => undefined);
     });
   }, []);
 
