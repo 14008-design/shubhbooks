@@ -1,7 +1,7 @@
 // Google Analytics 4 (frontend-only connector). The measurement ID arrives
 // through import.meta.env at build time; nothing here runs on the server.
 
-const measurementId = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_ANALYTICS_API_KEY;
+const measurementId = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_ANALYTICS_API_KEY"];
 
 type GtagFn = (...args: unknown[]) => void;
 
