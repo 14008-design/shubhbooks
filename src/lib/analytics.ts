@@ -12,7 +12,6 @@ declare global {
 }
 
 let initialized = false;
-const pending: unknown[][] = [];
 
 export async function initAnalytics() {
   if (initialized) return;
