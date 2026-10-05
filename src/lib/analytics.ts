@@ -1,7 +1,6 @@
-// Google Analytics 4 (frontend-only connector). The measurement ID arrives
-// through import.meta.env at build time; nothing here runs on the server.
-
-const measurementId = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_ANALYTICS_API_KEY"];
+// Google Analytics 4. The measurement ID comes from the project's
+// GOOGLE_ANALYTICS_MEASUREMENT_ID setting via a server function.
+import { getAnalyticsId } from "./analytics-config.functions";
 
 type GtagFn = (...args: unknown[]) => void;
 
@@ -13,15 +12,20 @@ declare global {
 }
 
 let initialized = false;
+const pending: unknown[][] = [];
 
-export function initAnalytics() {
+export async function initAnalytics() {
   if (initialized) return;
   if (typeof window === "undefined") return;
-  if (!measurementId) {
-    // Not connected yet — keep the site working without analytics.
+  initialized = true;
+
+  let measurementId: string | null = null;
+  try {
+    measurementId = (await getAnalyticsId()).id;
+  } catch {
     return;
   }
-  initialized = true;
+  if (!measurementId) return;
 
   const script = document.createElement("script");
   script.async = true;
