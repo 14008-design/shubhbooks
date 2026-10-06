@@ -5,7 +5,7 @@ import foxCover from "@/assets/fox-cover.avif.asset.json";
 import raoCover from "@/assets/rao-cover.avif.asset.json";
 import { getLatestSnapshots } from "@/lib/snapshots.functions";
 
-const ANALYTICS_URL = "https://lovely-web-slider.lovable.app/book-views";
+const ANALYTICS_URL = "https://shubhbooks.lovable.app/book-views";
 const FOX_STORE_URL = "https://www.bribooks.com/bookstore/the-fox-and-cub/";
 const RAO_STORE_URL = "https://www.bribooks.com/bookstore/rao-s-expedition-book/";
 
