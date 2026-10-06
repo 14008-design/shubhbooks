@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://lovely-web-slider.lovable.app/sitemap.xml
+Sitemap: https://shubhbooks.lovable.app/sitemap.xml
