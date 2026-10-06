@@ -32,8 +32,11 @@ export async function initAnalytics() {
   document.head.appendChild(script);
 
   window.dataLayer = window.dataLayer || [];
-  const gtag: GtagFn = function gtag(...args) {
-    window.dataLayer!.push(args);
+  // gtag.js requires the classic `arguments` object pushed into dataLayer;
+  // pushing a rest array makes Google silently drop every event.
+  const gtag: GtagFn = function gtag() {
+    // eslint-disable-next-line prefer-rest-params -- gtag.js needs the Arguments object
+    window.dataLayer!.push(arguments);
   };
   window.gtag = gtag;
 
