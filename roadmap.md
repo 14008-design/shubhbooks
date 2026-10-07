@@ -7,5 +7,6 @@
 - [x] Add /promo to sitemap.xml and reference sitemap from robots.txt.
 - [x] Rename the site to shubhbooks.lovable.app; sitemap, robots and the promo QR link updated; published and verified.
 - [ ] User formalities after the rename: Google Sites embeds, QR codes, BriBooks listing links, GA4 data-stream URL, new Search Console property + sitemap submit.
+- [ ] GSC: add new meta token sMFPqTRZTxguyKHkjAeqDsNq4FUTFybjG4rKI6PGx5w to head, reconnect connector with full webmasters scope, publish, verify + add property + submit sitemap for shubhbooks.lovable.app.
 - [ ] Ads advice for the site (pending user answers: goal + audience; Google Ads needs an 18+ account owner).
 - [ ] Run a fresh security scan before broad sharing (agent_security_v2 / app_mcp_deep results are stale for the newest commit).
