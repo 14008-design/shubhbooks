@@ -12,7 +12,6 @@ declare global {
 }
 
 let initialized = false;
-
 export async function initAnalytics() {
   if (initialized) return;
   if (typeof window === "undefined") return;
@@ -32,16 +31,26 @@ export async function initAnalytics() {
   document.head.appendChild(script);
 
   window.dataLayer = window.dataLayer || [];
-  // gtag.js requires the classic `arguments` object pushed into dataLayer;
-  // pushing a rest array makes Google silently drop every event.
   const gtag: GtagFn = function gtag() {
-    // eslint-disable-next-line prefer-rest-params -- gtag.js needs the Arguments object
     window.dataLayer!.push(arguments);
   };
   window.gtag = gtag;
-
   gtag("js", new Date());
-  gtag("config", measurementId);
+
+  // 🚀 ADVANCED ANALYTICS: Detect if the site is running inside an embed (iframe)
+  const isIframe = window.self !== window.top;
+  
+  gtag("config", measurementId, {
+    custom_traffic_source: isIframe ? "iframe_embed" : "direct_or_organic"
+  });
+
+  // Push a special event if someone views your site through an embed!
+  if (isIframe) {
+    gtag("event", "iframe_view", {
+      event_category: "Embeds",
+      event_label: document.referrer || "Unknown Embed Source"
+    });
+  }
 }
 
 export function trackPageView(path: string) {
