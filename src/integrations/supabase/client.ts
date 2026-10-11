@@ -16,15 +16,13 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
     if (init?.headers) {
       new Headers(init.headers).forEach((value, key) => headers.set(key, value));
     }
-
-    // New Supabase API keys are opaque strings, not bearer JWTs.
-    if (isNewSupabaseApiKey(supabaseKey) && headers.get('Authorization') === `Bearer ${supabaseKey}`) {
-      headers.delete('Authorization');
-    }
-
-    headers.set('apikey', supabaseKey);
-    return fetch(input, { ...init, headers });
-  };
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+    console.warn('[Supabase] Missing environment variables, running in fallback mode');
+    return createClient<Database>('https://placeholder.supabase.co', 'placeholder-key', {
+      global: { fetch: () => Promise.resolve(new Response('[]', { status: 200 })) },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  }
 }
 
 
